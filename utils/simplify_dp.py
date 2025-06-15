@@ -1,56 +1,13 @@
 
 import numpy as np
 
-class DP:
-    
+class douglasPeuker:
+    def __init__(self, epsilon = 0.01):
+        self.epsilon = epsilon      #epsilon (float): The tolerance distance. Points closer than this distance
+                                    #to the line segment formed by the endpoints will be discarded.
 
-    def douglas_peucker_iterative(points, epsilon):
-        """
-        Reduces the number of points in a curve using the Douglas-Peucker algorithm (iterative).
 
-        Args:
-            points (list or numpy.ndarray): A list of 2D or 3D points (e.g., [[x1, y1], [x2, y2], ...]).
-            epsilon (float): The tolerance distance. Points closer than this distance
-                            to the line segment formed by the endpoints will be discarded.
-
-        Returns:
-            list: A new list of points representing the simplified curve.
-        """
-        if len(points) <= 2:
-            return points
-
-        simplified = [points[0]]
-        stack = [(0, len(points) - 1)]
-        visited = [False] * len(points)
-        visited[0] = True
-        visited[-1] = True
-
-        while stack:
-            start_index, end_index = stack.pop()
-            max_distance = 0
-            farthest_index = -1
-
-            start_point = np.array(points[start_index])
-            end_point = np.array(points[end_index])
-
-            for i in range(start_index + 1, end_index):
-                if not visited[i]:
-                    point = np.array(points[i])
-                    distance = point_to_segment_distance(point, start_point, end_point)
-                    if distance > max_distance:
-                        max_distance = distance
-                        farthest_index = i
-
-            if max_distance > epsilon:
-                visited[farthest_index] = True
-                stack.append((start_index, farthest_index))
-                stack.append((farthest_index, end_index))
-
-        # Reconstruct the simplified path in the original order
-        simplified_points = [points[i] for i, v in enumerate(visited) if v]
-        return simplified_points
-
-    def point_to_segment_distance(point, a, b):
+    def point_to_segment_distance(self, point, a, b):
         """
         Calculates the shortest distance between a point and a line segment.
 
@@ -78,11 +35,57 @@ class DP:
             return np.linalg.norm(point - closest_point)
 
 
+    def simplify(self, points):
+        """
+        Reduces the number of points in a curve using the Douglas-Peucker algorithm (iterative).
+
+        Args:
+            points (list or numpy.ndarray): A list of 2D or 3D points (e.g., [[x1, y1], [x2, y2], ...]).
+
+        Returns:
+            list: A new list of points representing the simplified curve.
+        """
+        if len(points) <= 2:
+            return points
+
+        simplified = [points[0]]
+        stack = [(0, len(points) - 1)]
+        visited = [False] * len(points)
+        visited[0] = True
+        visited[-1] = True
+
+        while stack:
+            start_index, end_index = stack.pop()
+            max_distance = 0
+            farthest_index = -1
+
+            start_point = np.array(points[start_index])
+            end_point = np.array(points[end_index])
+
+            for i in range(start_index + 1, end_index):
+                if not visited[i]:
+                    point = np.array(points[i])
+                    distance = self.point_to_segment_distance(point, start_point, end_point)
+                    if distance > max_distance:
+                        max_distance = distance
+                        farthest_index = i
+
+            if max_distance > self.epsilon:
+                visited[farthest_index] = True
+                stack.append((start_index, farthest_index))
+                stack.append((farthest_index, end_index))
+
+        # Reconstruct the simplified path in the original order
+        simplified_points = [points[i] for i, v in enumerate(visited) if v]
+        return simplified_points
+
+
 def main():
     # Example usage with 2D points
     points_2d = [[0, 0], [1, 1], [2, 0.5], [3, 1], [4, 0], [5, -0.5], [6, 1], [7, 0]]
     epsilon_2d = 0.8
-    simplified_points_2d = douglas_peucker_iterative(points_2d, epsilon_2d)
+    dp = douglasPeuker(epsilon_2d)
+    simplified_points_2d = dp.simplify(points_2d)
     print("Original 2D points:", points_2d)
     print("Simplified 2D points (epsilon =", epsilon_2d, "):", simplified_points_2d)
 
@@ -91,29 +94,12 @@ def main():
     # Example usage with 3D points
     points_3d = [[0, 0, 0], [1, 1, 1], [2, 0.5, 0], [3, 1, 0.5], [4, 0, 1], [5, -0.5, 0], [6, 1, 1.5], [7, 0, 0]]
     epsilon_3d = 1.0
-    simplified_points_3d = douglas_peucker_iterative(points_3d, epsilon_3d)
+    dp2 = douglasPeuker(epsilon_3d)
+    simplified_points_3d = dp2.simplify(points_3d)
     print("Original 3D points:", points_3d)
     print("Simplified 3D points (epsilon =", epsilon_3d, "):", simplified_points_3d)
     
 
 if __name__ == '__main__':
     main()
-    
-    
-    
 
-    points_3d = [[0, 0, 0], [1, 1, 1], [2, 0.5, 0], [3, 1, 0.5], [4, 0, 1], [5, -0.5, 0], [6, 1, 1.5], [7, 0, 0]]
-    epsilon_3d = 1.0
-
-def dp(points_3d, epsilon_3d):
-    visited = []
-    s = 0
-    e = len(points_3d)
-    #for loop and find 1st stack
-    stack = [3]
-    while stack:
-        i = stack.pop()
-        if i not in visited:
-            visited.append(i)
-            #for loop and find farest point
-                

@@ -32,7 +32,10 @@ class chamfer_distance:
         """
         # Compute full pairwise distance matrix
         dist_matrix = np.linalg.norm(pc1[:, np.newaxis, :] - pc2[np.newaxis, :, :], axis=2)  # shape (N, M)
-
+        pc1 = np.array([[1,1],[2,2],[3,3]])
+        pc2= np.array([[1,1.5],[2,2.5],[3,3.5]])
+        print(pc1[:, np.newaxis] - pc2[np.newaxis, :])
+        
         # For each point in pc1, find the nearest point in pc2
         min_dist1 = np.min(dist_matrix, axis=1)
 

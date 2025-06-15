@@ -44,6 +44,25 @@ class Sort:
                     break
         return(arr)
     
+    #more follow principal
+    def insertion_sort(self, arr):
+        """
+        Sorts a list using the Insertion Sort algorithm.
+        """
+        # Traverse through 1 to n-1
+        # assuming the first element (index 0) is already sorted
+        for i in range(1, len(arr)):
+            key = arr[i]  # Current element to be inserted
+            j = i - 1     # Index of the last element in the sorted part
+
+            # Move elements of arr[0..i-1], that are greater than key,
+            # to one position ahead of their current position
+            while j >= 0 and key < arr[j]:
+                arr[j + 1] = arr[j]
+                j -= 1
+            arr[j + 1] = key # Place key at its correct position
+        return arr
+    
 #JUNO    
     def quick_modern(self,arr):
         if len(arr) <= 1:
@@ -97,15 +116,8 @@ def main():
     arr = [i for i in random.sample(range(10), 10)]
     sort = Sort()
     #arr.extend([5,3,4,7,1,0,0,0])  for count
-    print(sort.merge(arr))
+    print(sort.insertion_sort(arr))
 
 if __name__ == '__main__':
     main()
     
-    
-def insertion(arr):
-    for i in range(len(arr)):
-        for j in range(0, i-1):
-            if arr[i] < arr[j]:
-                #swap
-                pass
