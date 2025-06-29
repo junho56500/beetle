@@ -107,7 +107,16 @@ class NeuralNetwork(torch.nn.Module):
 def main():
     x=torch.rand(32,128)
     nn = NeuralNetwork()
-    print(nn(x))
+    total_params = sum(p.numel() for p in model.parameters())
+    print(f"Total number of parameters (including non-trainable): {total_params:,}")
+    
+    trainable_params = sum(p.numel() for p in model.parameters() if p.requires_grad)
+    print(f"Total number of TRAINABLE parameters: {trainable_params:,}")
+    
+    for param in model.parameters():
+        print(f"Shape: {param.shape}, Requires grad: {param.requires_grad}")
+    
+    #print(nn(x))
 
 if __name__ == '__main__':
     main()
