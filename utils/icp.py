@@ -138,6 +138,7 @@ if __name__ == "__main__":
     target_lane2 = generate_lane(np.array([2, 5, 1]), np.array([0.5, 1, 0.3]), length=8)
     target_lane3 = generate_lane(np.array([-3, 2, 4]), np.array([0.2, -0.8, 1]), length=12)
     target_lanes = [target_lane1, target_lane2, target_lane3]
+    print(target_lane2)
     target_full_cloud = np.vstack(target_lanes)
 
     # --- Create a known rigid transformation for Source Lanes ---
