@@ -1,6 +1,6 @@
 import torch
 
-# torch.where(condition, input, other, *, out=None) -> Tensor
+
 # Parameters:
 # condition (Tensor): A boolean tensor. Its shape must be broadcastable with input and other.
 # input (Tensor): The tensor whose elements are chosen when condition is True.
@@ -9,72 +9,90 @@ import torch
 # Return Value:
 # A new tensor with elements chosen from input or other. The shape of the output tensor will be the broadcasted shape of condition, input, and other.
 
-# Example 1: Basic usage with 1D tensors
-# Select from x if condition is True, else from y
-cond1 = torch.tensor([True, False, True, False])
-x1 = torch.tensor([10, 20, 30, 40])
-y1 = torch.tensor([1, 2, 3, 4])
+# --- Example 1: Basic 1D Tensors ---
+a = torch.tensor([1, 2, 3, 4])
+b = torch.tensor([1, 5, 3, 0])
 
-result1 = torch.where(cond1, x1, y1)
-print(f"Example 1: Basic 1D Selection\nCondition: {cond1}\nInput (x): {x1}\nOther (y): {y1}\nResult: {result1}")
-# Expected Output: [10, 2, 30, 4]
+result1 = torch.eq(a, b)
+# Or using the operator:
+# result1 = (a == b)
 
-print("-" * 30)
+print(f"Example 1: Basic 1D Comparison")
+print(f"Tensor a: {a}")
+print(f"Tensor b: {b}")
+print(f"a == b (torch.eq): {result1}")
+# Expected Output: tensor([ True, False,  True, False])
 
-# Example 2: Using broadcasting
-# condition (1D) broadcasts to match x2 and y2 (2D)
-cond2 = torch.tensor([True, False, True]) # Shape (3,)
-x2 = torch.tensor([[1, 1, 1],
-                   [2, 2, 2],
-                   [3, 3, 3]]) # Shape (3, 3)
-y2 = torch.tensor([[0, 0, 0],
-                   [0, 0, 0],
-                   [0, 0, 0]]) # Shape (3, 3)
+print("\n" + "="*40 + "\n")
 
-# For row 0 (True): pick from x2's row 0
-# For row 1 (False): pick from y2's row 1
-# For row 2 (True): pick from x2's row 2
-result2 = torch.where(cond2.unsqueeze(1), x2, y2) # Unsqueeze cond2 to (3,1) for row-wise broadcast
-print(f"Example 2: Broadcasting Condition\nCondition: {cond2.unsqueeze(1)}\nInput (x):\n{x2}\nOther (y):\n{y2}\nResult:\n{result2}")
+# --- Example 2: 2D Tensors ---
+c = torch.tensor([[1, 2, 3],
+                  [4, 5, 6]])
+d = torch.tensor([[1, 0, 3],
+                  [7, 5, 6]])
+
+result2 = torch.eq(c, d)
+print(f"Example 2: 2D Tensors")
+print(f"Tensor c:\n{c}")
+print(f"Tensor d:\n{d}")
+print(f"c == d (torch.eq):\n{result2}")
 # Expected Output:
-# tensor([[1, 1, 1],
-#         [0, 0, 0],
-#         [3, 3, 3]])
+# tensor([[ True, False,  True],
+#         [False,  True,  True]])
 
-print("-" * 30)
+print("\n" + "="*40 + "\n")
 
-# Example 3: Single scalar condition with tensors
-# If condition is a single True, pick all from x3, else pick all from y3
-cond3 = torch.tensor(True) # Scalar condition
-x3 = torch.randn(2, 2)
-y3 = torch.zeros(2, 2)
+# --- Example 3: Comparing a Tensor with a Scalar ---
+e = torch.tensor([[10, 20, 30],
+                  [40, 50, 60]])
+scalar_val = 20
 
-result3_true = torch.where(cond3, x3, y3)
-print(f"Example 3: Scalar Condition (True)\nCondition: {cond3}\nInput (x):\n{x3}\nOther (y):\n{y3}\nResult:\n{result3_true}")
-
-cond3_false = torch.tensor(False) # Scalar condition
-result3_false = torch.where(cond3_false, x3, y3)
-print(f"\nExample 3: Scalar Condition (False)\nCondition: {cond3_false}\nInput (x):\n{x3}\nOther (y):\n{y3}\nResult:\n{result3_false}")
-
-print("-" * 30)
-
-# Example 4: Implementing ReLU manually (for illustration)
-# Where x is positive, keep x, else 0
-x4 = torch.tensor([-1.0, 0.5, -2.0, 3.0])
-relu_manual = torch.where(x4 > 0, x4, torch.tensor(0.0))
-print(f"Example 4: Manual ReLU with torch.where\nInput: {x4}\nResult (ReLU): {relu_manual}")
-# Expected Output: tensor([0.0, 0.5, 0.0, 3.0])
-
-print("-" * 30)
-
-# Example 5: Replacing values in a tensor
-# Replace all values in data5 that are less than 5 with 0
-data5 = torch.tensor([[1, 6, 3],
-                      [8, 2, 7]])
-threshold = 5
-mask = data5 < threshold
-result5 = torch.where(mask, torch.tensor(0), data5)
-print(f"Example 5: Replacing values based on condition\nOriginal:\n{data5}\nThreshold: {threshold}\nMask:\n{mask}\nResult:\n{result5}")
+result3 = torch.eq(e, scalar_val)
+print(f"Example 3: Tensor vs Scalar")
+print(f"Tensor e:\n{e}")
+print(f"Scalar: {scalar_val}")
+print(f"e == scalar_val (torch.eq):\n{result3}")
 # Expected Output:
-# tensor([[0, 6, 0],
-#         [8, 0, 7]])
+# tensor([[False,  True, False],
+#         [False, False, False]])
+
+print("\n" + "="*40 + "\n")
+
+# --- Example 4: Broadcasting ---
+# f (shape 2,3) and g (shape 1,3)
+f = torch.tensor([[1, 2, 3],
+                  [4, 5, 6]])
+g = torch.tensor([1, 5, 6]) # Shape (3,) - will be broadcast to (1,3) and then (2,3)
+
+result4 = torch.eq(f, g)
+print(f"Example 4: Broadcasting")
+print(f"Tensor f:\n{f}")
+print(f"Tensor g: {g}")
+print(f"f == g (torch.eq):\n{result4}")
+# Expected Output:
+# tensor([[ True, False, False],  # (1,2,3) == (1,5,6) -> F F F -> should be True False False
+#         [False, True,  True]]) # (4,5,6) == (1,5,6) -> F True True
+# Correction:
+# Tensor f: [[1, 2, 3], [4, 5, 6]]
+# Tensor g: [1, 5, 6]
+#
+# f[0] == g -> [1==1, 2==5, 3==6] -> [T, F, F]
+# f[1] == g -> [4==1, 5==5, 6==6] -> [F, T, T]
+#
+# So the output is correct based on broadcasting.
+
+print("\n" + "="*40 + "\n")
+
+# --- Example 5: Using with torch.where() ---
+# A common pattern is to use torch.eq() (or ==) to create the condition mask for torch.where()
+data = torch.tensor([10, 20, 30, 20, 40])
+value_to_replace = 20
+replacement = 0
+
+mask_for_where = torch.eq(data, value_to_replace) # Create boolean mask
+result_where = torch.where(mask_for_where, torch.tensor(replacement), data)
+print(f"Example 5: Using with torch.where()")
+print(f"Original data: {data}")
+print(f"Value to replace ({value_to_replace}) mask: {mask_for_where}")
+print(f"Result (20 replaced with 0): {result_where}")
+# Expected Output: tensor([10, 0, 30, 0, 40])

@@ -99,6 +99,9 @@ class EKF2DFusion:
         # so H_k is simply the identity matrix.
         H_k = np.eye(3) 
 
+        print("z : ", lidar_pose_measurement)
+        print("self : ", self.x)
+        
         # Measurement residual (y_k) - difference between actual measurement and expected measurement
         # Expected measurement is H_k @ self.x_bar (predicted state)
         y_k = lidar_pose_measurement - (H_k @ self.x) # This is z_k - h(x_bar_k)
@@ -113,9 +116,14 @@ class EKF2DFusion:
         # Kalman Gain (K_k)
         K_k = self.P @ H_k.T @ np.linalg.inv(S_k)
 
+        print('hx : ', K_k)
+        
         # Updated state estimate (x_k)
         self.x = self.x + (K_k @ y_k)
 
+        print("K_k : ", K_k)
+        print("self2 : ", self.x)
+        
         # Updated covariance estimate (P_k)
         self.P = (np.eye(self.x.shape[0]) - K_k @ H_k) @ self.P
 

@@ -1,0 +1,20 @@
+{
+    "version": "0.2.0",
+    "configurations": [
+        {
+            "name": "Debug test.py (Single Process)",
+            "type": "python",
+            "request": "launch",
+            "program": "${workspaceFolder}/utils/kalman_filter_lib.py",
+            "args": [
+                ""
+            ],
+            "console": "integratedTerminal",
+            "env": {
+                "CUDA_VISIBLE_DEVICES": "0",
+                "OMP_NUM_THREADS": "1",
+                "MKL_NUM_THREADS": "1"
+            }
+        }
+    ]
+}
