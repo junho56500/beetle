@@ -201,6 +201,8 @@ if __name__ == "__main__":
     # Run Simulation
     true_states_full, measurements_full = simulate_6dof_data(num_simulation_steps, dt_val)
 
+    print(measurements_full)
+    
     # Store results
     ekf_states_full = []
     

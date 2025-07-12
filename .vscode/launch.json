@@ -5,10 +5,7 @@
             "name": "Debug test.py (Single Process)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/utils/kalman_filter_lib.py",
-            "args": [
-                ""
-            ],
+            "program": "${workspaceFolder}/utils/kamlan_filter_3dof_icp_u.py",
             "console": "integratedTerminal",
             "env": {
                 "CUDA_VISIBLE_DEVICES": "0",
