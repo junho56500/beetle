@@ -1,188 +1,120 @@
 import torch
 import torch.nn as nn
+import torch.nn.functional as F
+from typing import List
 
-# --- Deep Stem Implementation ---
-class DeepStem(nn.Module):
-    def __init__(self, in_channels=3, out_channels=64):
-        super(DeepStem, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels // 2, kernel_size=3, stride=2, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(out_channels // 2)
-        self.relu = nn.ReLU(inplace=True)
-        
-        self.conv2 = nn.Conv2d(out_channels // 2, out_channels // 2, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2d(out_channels // 2)
-        
-        self.conv3 = nn.Conv2d(out_channels // 2, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn3 = nn.BatchNorm2d(out_channels)
-        
-        self.maxpool = nn.MaxPool2d(kernel_size=3, stride=2, padding=1)
-
-    def forward(self, x):
-        x = self.conv1(x)
-        x = self.bn1(x)
-        x = self.relu(x)
-        
-        x = self.conv2(x)
-        x = self.bn2(x)
-        x = self.relu(x)
-        
-        x = self.conv3(x)
-        x = self.bn3(x)
-        x = self.relu(x)
-        
-        x = self.maxpool(x)
-        return x
-
-# --- BasicBlock for ResNet-18 ---
-class BasicBlock(nn.Module):
-    expansion = 1
-
-    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super(BasicBlock, self).__init__()
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(out_channels)
-        self.relu = nn.ReLU(inplace=True)
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=1, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2d(out_channels)
-        self.downsample = downsample
-
-    def forward(self, x):
-        identity = x
-        
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-        
-        out = self.conv2(out)
-        out = self.bn2(out)
-        
-        if self.downsample is not None:
-            identity = self.downsample(x)
-            
-        out += identity
-        out = self.relu(out)
-        
-        return out
-
-import torch
-import torch.nn as nn
-
-class Bottleneck(nn.Module):
-    expansion = 4
-
-    def __init__(self, in_channels, out_channels, stride=1, downsample=None):
-        super(Bottleneck, self).__init__()
-        # First 1x1 convolution to reduce channels
-        self.conv1 = nn.Conv2d(in_channels, out_channels, kernel_size=1, stride=1, bias=False)
-        self.bn1 = nn.BatchNorm2d(out_channels)
-        
-        # Second 3x3 convolution to process features
-        self.conv2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, stride=stride, padding=1, bias=False)
-        self.bn2 = nn.BatchNorm2d(out_channels)
-        
-        # Third 1x1 convolution to restore channels
-        self.conv3 = nn.Conv2d(out_channels, out_channels * self.expansion, kernel_size=1, stride=1, bias=False)
-        self.bn3 = nn.BatchNorm2d(out_channels * self.expansion)
-        
-        self.relu = nn.ReLU(inplace=True)
-        self.downsample = downsample
-
-    def forward(self, x):
-        identity = x
-        
-        out = self.conv1(x)
-        out = self.bn1(out)
-        out = self.relu(out)
-        
-        out = self.conv2(out)
-        out = self.bn2(out)
-        out = self.relu(out)
-        
-        out = self.conv3(out)
-        out = self.bn3(out)
-        
-        if self.downsample is not None:
-            identity = self.downsample(x)
-            
-        out += identity  # The skip connection
-        out = self.relu(out)
-        
-        return out
-
-# --- ResNet Model with Deep Stem ---
-class ResNet(nn.Module):
-    def __init__(self, block, layers, num_classes=1000):
-        super(ResNet, self).__init__()
-        self.in_channels = 64
-        
-        # Replace the standard stem with the DeepStem
-        self.stem = DeepStem(in_channels=3, out_channels=self.in_channels)
-        
-        # Build the residual layers
-        self.layer1 = self._make_layer(block, 64, layers[0])
-        self.layer2 = self._make_layer(block, 128, layers[1], stride=2)
-        self.layer3 = self._make_layer(block, 256, layers[2], stride=2)
-        self.layer4 = self._make_layer(block, 512, layers[3], stride=2)
-        
-        self.avgpool = nn.AdaptiveAvgPool2d((1, 1))
-        self.fc = nn.Linear(512 * block.expansion, num_classes)
-
-    def _make_layer(self, block, out_channels, num_blocks, stride=1):
-        downsample = None
-        if stride != 1 or self.in_channels != out_channels * block.expansion:
-            downsample = nn.Sequential(
-                nn.Conv2d(self.in_channels, out_channels * block.expansion, kernel_size=1, stride=stride, bias=False),
-                nn.BatchNorm2d(out_channels * block.expansion),
-            )
-        
-        layers = []
-        layers.append(block(self.in_channels, out_channels, stride, downsample))
-        self.in_channels = out_channels * block.expansion
-        for _ in range(1, num_blocks):
-            layers.append(block(self.in_channels, out_channels))
-        
-        return nn.Sequential(*layers)
-
-    def forward(self, x):
-        x = self.stem(x)
-        
-        x = self.layer1(x)
-        x = self.layer2(x)
-        x = self.layer3(x)
-        x = self.layer4(x)
-        
-        x = self.avgpool(x)
-        x = torch.flatten(x, 1)
-        x = self.fc(x)
-        
-        return x
-
-def resnet18_deep_stem(num_classes=1000):
+class FPN(nn.Module):
     """
-    Constructs a ResNet-18 model with a deep stem.
+    A simplified FPN module that takes feature maps from a backbone
+    and generates a feature pyramid.
     """
-    return ResNet(BasicBlock, [2, 2, 2, 2], num_classes)
+    def __init__(self, in_channels_list: List[int], out_channels: int):
+        super().__init__()
+        self.in_channels_list = in_channels_list
+        self.out_channels = out_channels
 
-# Example Usage:
-model = resnet18_deep_stem(num_classes=100)
-# Create a dummy input tensor for an image of size 224x224
-input_tensor = torch.randn(1, 3, 224, 224)
-output = model(input_tensor)
-print(f"Output shape: {output.shape}")
+        # Top-down path convolutions
+        # We use 1x1 convolutions to match the number of channels of the bottom-up features
+        self.conv_lateral_p5 = nn.Conv2d(in_channels_list[3], out_channels, kernel_size=1)
+        self.conv_lateral_p4 = nn.Conv2d(in_channels_list[2], out_channels, kernel_size=1)
+        self.conv_lateral_p3 = nn.Conv2d(in_channels_list[1], out_channels, kernel_size=1)
+        self.conv_lateral_p2 = nn.Conv2d(in_channels_list[0], out_channels, kernel_size=1)
+
+        # Convolutions to smooth the fused feature maps
+        self.conv_smooth_p5 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.conv_smooth_p4 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.conv_smooth_p3 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+        self.conv_smooth_p2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+
+    def forward(self, backbone_features: List[torch.Tensor]) -> List[torch.Tensor]:
+        """
+        Args:
+            backbone_features (List[torch.Tensor]): A list of feature maps from
+                                                    the bottom-up path of a backbone,
+                                                    ordered from shallowest to deepest.
+                                                    e.g., [C2, C3, C4, C5]
+        Returns:
+            List[torch.Tensor]: A list of FPN feature maps (P2, P3, P4, P5),
+                                ordered from finest to coarsest resolution.
+        """
+        # The input backbone features are typically:
+        # C2: [N, in_channels_list[0], H/4, W/4]
+        # C3: [N, in_channels_list[1], H/8, W/8]
+        # C4: [N, in_channels_list[2], H/16, W/16]
+        # C5: [N, in_channels_list[3], H/32, W/32]
+        
+        c2, c3, c4, c5 = backbone_features
+
+        # --- Top-down path + Lateral connections ---
+        
+        # P5 is simply the C5 feature map after a 1x1 conv
+        p5 = self.conv_lateral_p5(c5)
+
+        # Upsample P5 and add it to C4
+        upsampled_p5 = F.interpolate(p5, size=c4.shape[2:], mode='bilinear', align_corners=False)
+        p4 = self.conv_lateral_p4(c4) + upsampled_p5
+
+        # Upsample P4 and add it to C3
+        upsampled_p4 = F.interpolate(p4, size=c3.shape[2:], mode='bilinear', align_corners=False)
+        p3 = self.conv_lateral_p3(c3) + upsampled_p4
+
+        # Upsample P3 and add it to C2
+        upsampled_p3 = F.interpolate(p3, size=c2.shape[2:], mode='bilinear', align_corners=False)
+        p2 = self.conv_lateral_p2(c2) + upsampled_p3
+
+        # --- Final smoothing of the feature maps ---
+        p5 = self.conv_smooth_p5(p5)
+        p4 = self.conv_smooth_p4(p4)
+        p3 = self.conv_smooth_p3(p3)
+        p2 = self.conv_smooth_p2(p2)
+        
+        # Return the feature pyramid
+        return [p2, p3, p4, p5]
+
+# --- Example of a Mock Backbone ---
+# This class simulates a ResNet backbone's output
+class MockBackbone(nn.Module):
+    def __init__(self):
+        super().__init__()
+        self.conv = nn.Conv2d(3, 64, kernel_size=3, padding=1) # Initial layer
+
+    def forward(self, x):
+        # Simulate feature maps at different strides (4, 8, 16, 32)
+        # In a real ResNet, these would be the outputs of different stages
+        h, w = x.shape[2], x.shape[3]
+        c2 = torch.randn(x.shape[0], 64, h // 4, w // 4)
+        c3 = torch.randn(x.shape[0], 128, h // 8, w // 8)
+        c4 = torch.randn(x.shape[0], 256, h // 16, w // 16)
+        c5 = torch.randn(x.shape[0], 512, h // 32, w // 32)
+        return [c2, c3, c4, c5]
 
 
-# Bottleneck example
-# Create a dummy input tensor
-input_tensor = torch.randn(1, 64, 56, 56)
+if __name__ == '__main__':
+    # Define FPN parameters
+    # The input channels should match the output channels of your backbone stages
+    backbone_in_channels = [64, 128, 256, 512]
+    # The output channel count for each FPN level is typically fixed
+    fpn_out_channels = 256
 
-# Create a Bottleneck block
-# in_channels=64, out_channels=64, expansion=4 -> 64 -> 64 -> 256
-bottleneck_block = Bottleneck(64, 64, stride=1)
-output_tensor = bottleneck_block(input_tensor)
+    # Create model instances
+    mock_backbone = MockBackbone()
+    fpn_model = FPN(in_channels_list=backbone_in_channels, out_channels=fpn_out_channels)
 
-print(f"Input shape: {input_tensor.shape}")
-print(f"Output shape: {output_tensor.shape}")
+    # Create a dummy input image
+    dummy_image = torch.randn(2, 3, 256, 256) # Batch=2, Channels=3, Size=256x256
 
-# Expected output:
-# Input shape: torch.Size([1, 64, 56, 56])
-# Output shape: torch.Size([1, 256, 56, 56])
+    # 1. Get features from the backbone
+    backbone_features = mock_backbone(dummy_image)
+    print("--- Backbone Feature Map Shapes ---")
+    for i, features in enumerate(backbone_features):
+        print(f"C{i+2} Shape: {features.shape}")
+
+    # 2. Pass them to the FPN
+    fpn_features = fpn_model(backbone_features)
+
+    print("\n--- FPN Feature Map Shapes ---")
+    for i, features in enumerate(fpn_features):
+        print(f"P{i+2} Shape: {features.shape}")
+
+    print("\nFPN successfully created a multi-scale feature pyramid!")
+    print("Each output level has the same number of channels (256) but a different spatial resolution.")

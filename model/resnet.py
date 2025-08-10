@@ -101,9 +101,9 @@ class Bottleneck(nn.Module):
         out = self.conv3(out)
         out = self.bn3(out)
         
-        if self.downsample is not None:
-            identity = self.downsample(x)
-            
+        # if self.downsample is not None:
+        #     identity = self.downsample(x)
+        identity = self.downsample(x)
         out += identity  # The skip connection
         out = self.relu(out)
         
@@ -177,8 +177,8 @@ input_tensor = torch.randn(1, 64, 56, 56)
 
 # Create a Bottleneck block
 # in_channels=64, out_channels=64, expansion=4 -> 64 -> 64 -> 256
-bottleneck_block = Bottleneck(64, 64, stride=1)
-output_tensor = bottleneck_block(input_tensor)
+# bottleneck_block = Bottleneck(64, 64, stride=1)
+# output_tensor = bottleneck_block(input_tensor)
 
 print(f"Input shape: {input_tensor.shape}")
 print(f"Output shape: {output_tensor.shape}")
