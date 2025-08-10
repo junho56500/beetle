@@ -236,7 +236,7 @@ if __name__ == "__main__":
             # Pass the measurement (z) and its covariance (R)
             # R_icp (from your icp_lane_registration) would go here
             ekf.update(z=measurements_full[i], R=ekf.R, HJacobian=ekf.H_jac, Hx=ekf.h) 
-
+        print(measurements_full[i])
         ekf_states_full.append(ekf.x.copy())
 
     ekf_states_full = np.array(ekf_states_full)

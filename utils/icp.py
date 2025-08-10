@@ -116,7 +116,7 @@ def align_points_svd(source_points, target_points):
     return R, t
 
 # --- 2. Iterative Closest Point (ICP) algorithm implementation ---
-def icp(source_lanes, target_lanes, max_iterations=100, tolerance=1e-6):
+def run_icp(source_lanes, target_lanes, max_iterations=100, tolerance=1e-6):
     """
     Performs ICP to align 3D source lanes to target lanes.
 
