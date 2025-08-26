@@ -131,13 +131,16 @@ def icp_lane_registration(
     
     print(o3d.__version__)
     # Get covariance (use actual result if generalized, otherwise the placeholder)
-    # if estimation_method_type == 'generalized':
-    #     covariance_matrix = registration_result.covariance
-    #     print(covariance_matrix)
-    # else: covariance_matrix already set above as placeholder
+    if estimation_method_type == 'generalized':
+        voxel_size = 0.05 # Voxel size is a parameter to consider for the calculation
+        information_matrix = o3d.pipelines.registration.get_information_matrix_from_point_clouds(
+            source_cloud_o3d, target_cloud_o3d, voxel_size * 1.4, registration_result.transformation)
+        # else: covariance_matrix already set above as placeholder
+        covariance_matrix = np.linalg.inv(information_matrix)
+        print('covariance_matrix :', covariance_matrix)
 
-    final_rmse = registration_result.inlier_rmse
-    final_fitness = registration_result.fitness
+        final_rmse = registration_result.inlier_rmse
+        final_fitness = registration_result.fitness
     
     # --- New Logic: Transform source_cloud and split back into lanes ---
     # Apply the final transformation to the original flattened source cloud (NumPy array)

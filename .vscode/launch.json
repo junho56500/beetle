@@ -5,7 +5,7 @@
             "name": "Debug test.py (Single Process)",
             "type": "python",
             "request": "launch",
-            "program": "${workspaceFolder}/utils/kamlan_filter_3dof_icp_u.py",
+            "program": "${workspaceFolder}/utils/icp_open3d.py",
             "console": "integratedTerminal",
             "env": {
                 "CUDA_VISIBLE_DEVICES": "0",
