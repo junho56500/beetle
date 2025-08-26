@@ -45,3 +45,17 @@ def main():
 
 if __name__ == '__main__':
     main()
+
+def b_search(arr, num):
+    
+    start=0  
+    end=len(arr)
+    
+    while start >= end:
+        center = int((start + end) / 2)
+        if num == arr[center]:
+            return center
+        elif num > arr[center]:
+            start = center + 1
+        else:
+            end = center - 1
