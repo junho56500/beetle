@@ -35,14 +35,36 @@ class Sort:
                     arr[i],arr[j] = arr[j],arr[i]
         return(arr)
 #JUNO    
-    def insertion(self, arr):
-        for i in range(len(arr)):
-            for j in range(i, 0, -1):
-                if arr[j] < arr[j-1]:
-                    arr[j],arr[j-1] = arr[j-1],arr[j]
-                else:
-                    break
-        return(arr)
+    def insertion_sort(self, arr):
+        """
+        Sorts a list in ascending order using the Insertion Sort algorithm.
+
+        The algorithm iterates through the list, taking one element at a time
+        from the unsorted part and inserting it into its correct position
+        in the sorted part.
+
+        Time Complexity: O(n^2)
+        Space Complexity: O(1)
+
+        Args:
+            arr: The list of integers to be sorted.
+        """
+        # The first element is considered sorted, so we start from the second element (index 1).
+        for i in range(1, len(arr)):
+            # Store the current element to be inserted in the sorted part.
+            key = arr[i]
+            
+            # Start comparing the key with elements in the sorted part, from right to left.
+            j = i - 1
+
+            # Shift elements of the sorted part that are greater than the key,
+            # one position to the right to make space for the key.
+            while j >= 0 and key < arr[j]:
+                arr[j + 1] = arr[j]
+                j -= 1
+            
+            # Place the key at its correct position.
+            arr[j + 1] = key
     
     #more follow principal
     def insertion_sort(self, arr):
