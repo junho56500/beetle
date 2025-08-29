@@ -2,6 +2,16 @@ import torch
 import torch.nn as nn
 import torch.nn.functional as F
 
+
+
+# Focal Loss (gamma=0, alpha=1.0) will be very close to the Standard CE Loss, confirming that γ=0 makes Focal Loss behave like CE.
+
+# Focal Loss (gamma=2.0, alpha=0.25) will be significantly lower than the standard CE Loss, especially for the "easy" examples, 
+# because of the down-weighting effect of the modulating factor.
+
+# The individual example analysis further illustrates how the modulating factor becomes very small for a confident (easy) prediction 
+# (e.g., Example 0) but remains closer to 1 for an uncertain or incorrect (hard) prediction (e.g., Example 3).
+
 def softmax_focal_loss(inputs: torch.Tensor, targets: torch.Tensor, gamma: float = 2.0, alpha: float = 0.25) -> torch.Tensor:
     """
     Computes the Softmax Focal Loss.

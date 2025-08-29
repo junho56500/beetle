@@ -43,8 +43,6 @@ def find_nearest_and_unmatched_points(group_a, group_b):
 
     # Sort potential matches by distance to prioritize closer matches
     potential_matches.sort()
-    
-    print(potential_matches)
 
     # Resolve matches: iterate through sorted potential matches and claim B points
     claimed_a_indices = set()

@@ -110,11 +110,15 @@ class FPN(nn.Module):
         #Output Shape (P5): (N, 256, 7, 7)
         p5 = self.conv_lateral_p5(c5)
         
-        # P5 ((N, 256, 14, 14)) : C4 ((N, 1024, 14, 14)) with the upsampled P5 ((N, 256, 14, 14)).
+        # P4 (N, 256, 14, 14) : C4 ((N, 1024, 14, 14)) with the upsampled P5 ((N, 256, 14, 14)).
         upsampled_p5 = F.interpolate(p5, size=c4.shape[2:], mode='bilinear', align_corners=False)
         p4 = self.conv_lateral_p4(c4) + upsampled_p5
+        
+        # P4 (N, 256, 28, 28) : C3 ((N, 512, 28, 28)) with the upsampled P4 ((N, 256, 28, 28)).
         upsampled_p4 = F.interpolate(p4, size=c3.shape[2:], mode='bilinear', align_corners=False)
         p3 = self.conv_lateral_p3(c3) + upsampled_p4
+        
+        # P2 (N, 256, 56, 56) : C2 ((N, 256, 56, 56)) with the upsampled P3 ((N, 256, 56, 56)).
         upsampled_p3 = F.interpolate(p3, size=c2.shape[2:], mode='bilinear', align_corners=False)
         p2 = self.conv_lateral_p2(c2) + upsampled_p3
         p5 = self.conv_smooth_p5(p5)
