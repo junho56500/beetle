@@ -160,7 +160,7 @@ def icp_lane_registration(
     return {
         'R': R_final,
         't': t_final,
-        # 'covariance': covariance_matrix,
+        'covariance': covariance_matrix,
         'rmse': final_rmse,
         'fitness': final_fitness,
         'transformation_matrix': registration_result.transformation,
@@ -225,6 +225,7 @@ if __name__ == "__main__":
     R_computed = icp_results['R']
     t_computed = icp_results['t']
     final_mse = icp_results['rmse']
+    final_fitness = icp_results['fitness']
     
     print("\n--- ICP Results ---")
     print("Computed Rotation Matrix (R_computed):\n", R_computed)
@@ -232,6 +233,7 @@ if __name__ == "__main__":
     print("\nComputed Translation Vector (t_computed):\n", t_computed)
     print("\nTrue Translation Vector (true_t):\n", true_t)
     print(f"\nFinal MSE: {final_mse:.6f}")
+    print(f"\nFinal Fitness: {final_fitness:.6f}")
 
     # --- Visualization ---
     fig = plt.figure(figsize=(15, 7))
@@ -275,13 +277,13 @@ if __name__ == "__main__":
     # plt.show()
     
     
-#     # Convert R to Euler angles for easier interpretation (if needed for state)
-#     r_rot_final = Rotation.from_matrix(icp_results['R'].copy())
-#     R_final_degrees = np.degrees(r_rot_final.as_euler('xyz', degrees=False))
-#     print(f"Final Rotation (Euler XYZ degrees): {R_final_degrees}")
+    # Convert R to Euler angles for easier interpretation (if needed for state)
+    r_rot_final = Rotation.from_matrix(icp_results['R'].copy())
+    R_final_degrees = np.degrees(r_rot_final.as_euler('xyz', degrees=False))
+    print(f"Final Rotation (Euler XYZ degrees): {R_final_degrees}")
 
     # --- How to use these results in a Kalman Filter ---
     # Your Kalman Filter's update step would receive:
-    # z_icp = np.concatenate((icp_results['t'], np.radians(R_final_degrees))) # If state is [x,y,z,roll,pitch,yaw]
-    # R_icp = icp_results['covariance']
+    z_icp = np.concatenate((icp_results['t'], np.radians(R_final_degrees))) # If state is [x,y,z,roll,pitch,yaw]
+    R_icp = icp_results['covariance']
     # You would then pass z_icp and R_icp to your EKF.update() method.
