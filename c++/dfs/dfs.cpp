@@ -64,3 +64,28 @@ int main()
 
     return 0;
 }
+
+
+vector<int> dfs(map<int,vector<int>> graph, int v)
+{
+    map<int,bool> visited;
+    stack<int> s;
+    s.push(v);
+
+    while(!s.empty())
+    {
+        int i = s.top();
+        s.pop();
+        if(!visited[i])
+        {
+            visited[i]= true;
+            for(auto j:graph.at(i))
+            {
+                if(!visited[j])
+                {
+                    s.push(j);
+                }
+            }
+        }
+    }
+}

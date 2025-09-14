@@ -1,4 +1,5 @@
 # A helper function to print the contents of a list.
+# // Time Complexity: O(n^2)
 def print_list(arr):
     """
     Prints the elements of a list.
@@ -18,7 +19,7 @@ def insertion_sort(arr):
             arr[j + 1] = arr[j]
             j -= 1
         arr[j + 1] = key
-
+    
 # Example usage:
 if __name__ == "__main__":
     data = [12, 11, 13, 5, 6]
@@ -29,5 +30,34 @@ if __name__ == "__main__":
     insertion_sort(data)
     
     print("Sorted list (Insertion Sort):")
-    print_list(data)
-
+    print_list(data)      
+    
+def insertion(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i - 1
+        while j >= 0 and key < arr[j]:
+            arr[j+1] = arr[j]
+            j -= 1
+        arr[j+1] = key
+           
+           
+def insertion(arr):
+    for i in range(1,len(arr)):
+        key = arr[i]
+        j = i-1
+        while j >= 0 and key < arr[j]:
+            arr[j] = arr[j+1]
+            arr
+            
+            
+            
+            
+def insertion(arr):
+    for i in range(1, len(arr)):
+        key = arr[i]
+        j = i-1
+        while j >=0 and arr[j] > key:
+            arr[j+1] = arr[j]
+            j -= 1
+        arr[j+1] = key

@@ -75,14 +75,3 @@ def main():
 
 if __name__ == '__main__':
     main()
-    
-    
-    
-    def dfs(graph, v):
-        visited = []
-        stack =[v]
-        while stack:
-            i = stack.pop
-            if i not in visited:
-                visited.append(i)
-                stack += [j for j in graph[v] if j not in visited]
