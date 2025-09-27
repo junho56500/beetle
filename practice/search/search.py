@@ -46,16 +46,15 @@ def main():
 if __name__ == '__main__':
     main()
 
-def b_search(arr, num):
+def binary(arr, num):
+    s_idx = 0
+    e_idx = len(arr)
+    while s_idx >= e_idx:
+        c_idx = int(s_idx + e_idx /2)
+        if arr[c_idx] == num:
+            return c_idx
+        elif arr[s_idx] > num and arr[c_idx] > num:
+            e_idx = c_idx
+        elif arr[e_idx < num] and arr[c_idx] < num:
+            s_idx = c_idx
     
-    start=0  
-    end=len(arr)
-    
-    while start >= end:
-        center = int((start + end) / 2)
-        if num == arr[center]:
-            return center
-        elif num > arr[center]:
-            start = center + 1
-        else:
-            end = center - 1

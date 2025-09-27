@@ -165,7 +165,7 @@ int main() {
     // --- 3. const_cast ---
     std::cout << "\n--- const_cast ---" << std::endl;
     const int const_value = 100;
-    int* ptr = const_cast<int>(const_value); // Removing constness
+    int* ptr = const_cast<int*>(&const_value); // Removing constness
     *ptr = 200; // Undefined behavior, but the cast is successful
     std::cout << "Value after const_cast: " << *ptr << std::endl;
     
@@ -179,3 +179,16 @@ int main() {
 
     return 0;
 }
+
+
+
+
+int a = 3;
+
+float b = static_cast<float>(a);
+
+const float c = 4.3;
+
+float* d = const_cast<float*>(&c);
+
+

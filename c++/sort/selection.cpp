@@ -33,20 +33,3 @@ int main()
     }
     return 0;
 }
-
-
-void selection(vector<int>& arr)
-{
-    for(int i=0; i<sizeof(arr); i++)
-    {
-        int min_idx = i;
-        for(int j=i+1; j<sizeof(arr); j++)
-        {
-            if(arr[min_idx]<arr[j])
-            {
-                min_idx = j;
-            }
-        }
-        swap(arr[min_idx], arr[i]);
-    }
-}

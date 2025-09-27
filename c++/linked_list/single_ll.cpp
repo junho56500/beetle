@@ -1,14 +1,11 @@
 #include <iostream>
 
-// The Node structure
 struct Node {
-    int data;     // The data stored in the node
-    Node* next;   // A pointer to the next node in the sequence
+    int data;
+    Node* next;
 
-    // Constructor to easily create a new node
-    Node(int val) : data(val), next(nullptr) {}
+    Node(int val):data(val), next(nullptr) {}
 };
-
 
 class LinkedList {
 private:

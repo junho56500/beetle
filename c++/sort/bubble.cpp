@@ -29,19 +29,3 @@ int main()
     }
     return 0;
 }
-
-
-
-void bubble(vector<int>& arr)
-{
-    for(int i=0; i<sizeof(arr); i++)
-    {
-        for(int j=0; j<sizeof(arr)-i-1; j++)
-        {
-            if(arr[i]>arr[j])
-            {
-                swap(arr[i], arr[j]);
-            }
-        }
-    }
-}

@@ -1,0 +1,16 @@
+
+복잡도	대표 알고리즘
+O(1)	배열 인덱스 접근, HashMap 조회, access array index
+O(log n)	이진 탐색, 힙 삽입/삭제, binary search, heap insert, delete
+O(n)	선형 탐색, 단일 루프, 1st ordered linear search, single loop
+O(n log n)	병합 정렬, 퀵 정렬 (평균) quick sort, merge sort
+O(n²)	버블/선택/삽입 정렬 , bubble, selection, insertion sort
+O(2ⁿ)	부분 집합, 순열, 조합 탐색 permutation, search
+O(n!)	모든 순열 탐색 (TSP 등) full search
+
+
+                                list                        array
+access                          O(1)                        O(1)
+insertion/deletion - end        O(1) + O(n)(search)         O(1)
+insertion/deletion - middle     O(1) + O(n)(search)         O(n)          
+insertion/deletion - first      O(1)                        O(n) 
