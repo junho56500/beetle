@@ -15,6 +15,7 @@ Local map net>
 - DETR transformer : [Vision] End-to-End Object Detection with Transformers : https://arxiv.org/abs/2005.12872
 - Deformable DETR: [Vision] Deformable Transformers for End-to-End Object Detection : https://arxiv.org/abs/2010.04159
 - CurveFormer++: [Curve/Temporal] 3D Lane Detection by Curve Propagation with Temporal Curve Queries and Attention
+- PolyNet : PolyNet: Polynomial Neural Network for 3D Shape Recognition with PolyShape Representation https://arxiv.org/abs/2110.07882 https://github.com/myavartanoo/PolyNet_PyTorch 
 
 E2E Archi>
 
@@ -23,3 +24,6 @@ E2E Archi>
 
 - Uni-AD : https://arxiv.org/pdf/2212.10156
 - PARA-Drive: Parallelized Architecture for Real-time Autonomous Driving : https://openaccess.thecvf.com/content/CVPR2024/papers/Weng_PARA-Drive_Parallelized_Architecture_for_Real-time_Autonomous_Driving_CVPR_2024_paper.pdf
+
+model design>
+<img src="projects\eagle\model_design.svg">
