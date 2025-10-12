@@ -26,4 +26,7 @@ E2E Archi>
 - PARA-Drive: Parallelized Architecture for Real-time Autonomous Driving : https://openaccess.thecvf.com/content/CVPR2024/papers/Weng_PARA-Drive_Parallelized_Architecture_for_Real-time_Autonomous_Driving_CVPR_2024_paper.pdf
 
 model design>
+- model flow for training stages
 <img src="projects\eagle\model_design.svg">
+
+- 
