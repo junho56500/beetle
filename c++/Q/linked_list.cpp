@@ -81,3 +81,6 @@ void remove(Node** head_ref)
         cur = cur->next;
     }
 }
+
+
+# 맨처음 list 지울 때는 head = cur 식으로 head 자체를 바꾸어야 함

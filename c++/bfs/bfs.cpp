@@ -57,3 +57,31 @@ int main()
     return 0;
 }
 
+
+
+
+vector<int> bfs(const map<int, vector<int>>& graph, int v)
+{
+    map<int, bool> visited;
+    queue<int> q;
+    q.push(v);
+    vector<int> ret;
+
+    while(!q.empty())
+    {
+        int i = q.front();
+        q.pop();
+        ret.push_back(i);
+        if (!visited[i])
+        {
+            visited[i] = true;
+            for (const auto& j : graph.at(i))
+            {
+                if (!visited[j])
+                {
+                    q.push(j);
+                }
+            }
+        }
+    }
+}

@@ -18,14 +18,7 @@ vector<int> dfs(map<int, vector<int>> graph, int v)
     {
         int i = s.top();
         s.pop();
-        // cout << "i : " << i << '\n';
         ret.push_back(i);
-        // stack<int> temp = s;
-        // while (!temp.empty())
-        // {
-        //     cout << "temp : " << temp.top() << '\n';
-        //     temp.pop();
-        // }
 
         if(!visited[i])
         {
@@ -63,4 +56,32 @@ int main()
     }
 
     return 0;
+}
+
+
+vector<int> dfs(map<int,vector<int>> graph, int v)
+{
+    map<int, bool> visited;
+    stack<int> s;
+    s.push(v);
+    vector<int> ret;
+
+    while(!s.empty())
+    {
+        int i = s.top();
+        s.pop();
+        ret.push_back(i);
+        if(!visited[i])
+        {
+            visited[i] = true;
+            for(const auto& j: graph[i])
+            {
+                if(!visited[j])
+                {
+                    s.push(j);
+                }
+            }
+        }
+    }
+    
 }
