@@ -29,7 +29,7 @@ vector<pair<int,int>> findWay(const vector<vector<char>>& maze)
     {
         for (int j = 0; j < col; j++)
         {
-            if([i][j] == 'S')
+            if(maze[i][j] == 'S')
             {
                 sx = i;
                 sy = j;

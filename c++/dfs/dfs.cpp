@@ -85,3 +85,28 @@ vector<int> dfs(map<int,vector<int>> graph, int v)
     }
     
 }
+
+int dfs(map<int,vector<int>> g, int v)
+{
+    map<int,bool> visited;
+    stack<int> s;
+    s.push(v);
+    
+    while(!s.empty())
+    {
+        int i = s.top();
+        s.pop();
+        if(!visited[i])
+        {
+            visited[i] = true;
+            for (const auto& j: g[i])
+            {
+                if(!visited[j])
+                {
+                    s.push(j);
+                }
+            }
+        }
+    }
+
+}

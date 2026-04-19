@@ -1,120 +1,145 @@
 import torch
 import torch.nn as nn
 import torch.nn.functional as F
-from typing import List
 
-class FPN(nn.Module):
-    """
-    A simplified FPN module that takes feature maps from a backbone
-    and generates a feature pyramid.
-    """
-    def __init__(self, in_channels_list: List[int], out_channels: int):
-        super().__init__()
-        self.in_channels_list = in_channels_list
-        self.out_channels = out_channels
 
-        # Top-down path convolutions
-        # We use 1x1 convolutions to match the number of channels of the bottom-up features
-        self.conv_lateral_p5 = nn.Conv2d(in_channels_list[3], out_channels, kernel_size=1)
-        self.conv_lateral_p4 = nn.Conv2d(in_channels_list[2], out_channels, kernel_size=1)
-        self.conv_lateral_p3 = nn.Conv2d(in_channels_list[1], out_channels, kernel_size=1)
-        self.conv_lateral_p2 = nn.Conv2d(in_channels_list[0], out_channels, kernel_size=1)
+#1. Constant Initialization (nn.init.constant_) : Generally used for biases, almost never for weights.
+layer = nn.Linear(5, 5)
 
-        # Convolutions to smooth the fused feature maps
-        self.conv_smooth_p5 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.conv_smooth_p4 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.conv_smooth_p3 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
-        self.conv_smooth_p2 = nn.Conv2d(out_channels, out_channels, kernel_size=3, padding=1)
+# Initialize weights to 0.01 (Not recommended for deep layers)
+nn.init.constant_(layer.weight, 0.01)
 
-    def forward(self, backbone_features: List[torch.Tensor]) -> List[torch.Tensor]:
-        """
-        Args:
-            backbone_features (List[torch.Tensor]): A list of feature maps from
-                                                    the bottom-up path of a backbone,
-                                                    ordered from shallowest to deepest.
-                                                    e.g., [C2, C3, C4, C5]
-        Returns:
-            List[torch.Tensor]: A list of FPN feature maps (P2, P3, P4, P5),
-                                ordered from finest to coarsest resolution.
-        """
-        # The input backbone features are typically:
-        # C2: [N, in_channels_list[0], H/4, W/4]
-        # C3: [N, in_channels_list[1], H/8, W/8]
-        # C4: [N, in_channels_list[2], H/16, W/16]
-        # C5: [N, in_channels_list[3], H/32, W/32]
-        
-        c2, c3, c4, c5 = backbone_features
+# Initialize bias to 0 (Common practice)
+nn.init.constant_(layer.bias, 0)
 
-        # --- Top-down path + Lateral connections ---
-        
-        # P5 is simply the C5 feature map after a 1x1 conv
-        p5 = self.conv_lateral_p5(c5)
+#2. Xavier (Glorot) Initialization
+#nn.init.xavier_uniform_This fills the tensor with values sampled from a uniform distribution U(-a, a)
+#Best for: Tanh or Sigmoid activations.
 
-        # Upsample P5 and add it to C4
-        upsampled_p5 = F.interpolate(p5, size=c4.shape[2:], mode='bilinear', align_corners=False)
-        p4 = self.conv_lateral_p4(c4) + upsampled_p5
+layer = nn.Linear(10, 10)
+nn.init.xavier_uniform_(layer.weight)
 
-        # Upsample P4 and add it to C3
-        upsampled_p4 = F.interpolate(p4, size=c3.shape[2:], mode='bilinear', align_corners=False)
-        p3 = self.conv_lateral_p3(c3) + upsampled_p4
+#3. Kaiming (He) Initialization : . It accounts for the fact that ReLU neurons 
+# "kill" half of the input (values < 0), so it compensates by making the initial weights larger.
+# Usage: This is the default for most ReLU-based architectures (ResNet, etc.).
+# Best for: ReLU, Leaky ReLU, and PReLU activations.
 
-        # Upsample P3 and add it to C2
-        upsampled_p3 = F.interpolate(p3, size=c2.shape[2:], mode='bilinear', align_corners=False)
-        p2 = self.conv_lateral_p2(c2) + upsampled_p3
+layer = nn.Linear(10, 10)
 
-        # --- Final smoothing of the feature maps ---
-        p5 = self.conv_smooth_p5(p5)
-        p4 = self.conv_smooth_p4(p4)
-        p3 = self.conv_smooth_p3(p3)
-        p2 = self.conv_smooth_p2(p2)
-        
-        # Return the feature pyramid
-        return [p2, p3, p4, p5]
+# 'nonlinearity' helps the function calculate the correct gain
+nn.init.kaiming_uniform_(layer.weight, nonlinearity='relu')
 
-# --- Example of a Mock Backbone ---
-# This class simulates a ResNet backbone's output
-class MockBackbone(nn.Module):
+
+#1. CNN (Conv2d)
+#Since CNNs are almost always paired with ReLU activations 
+# (like in ResNet or VGG), kaiming_uniform_ is the best choice. 
+# It ensures that the signal doesn't die out as it passes through many convolutional filters.
+
+#2. Linear (Dense)
+#If the Linear layer is your "output" layer or uses a Tanh/Sigmoid activation, 
+# xavier_uniform_ is the standard. 
+# If it's a hidden layer followed by ReLU, you could also use Kaiming here.
+
+#3. Attention (MultiheadAttention)Attention mechanisms rely heavily on Dot Products (Q * K^T). 
+# If the weights are too large, the dot products explode, pushing the Softmax into 
+# regions where gradients are nearly zero.
+#Xavier is the gold standard for Attention because it keeps the variance of the 
+# projections (Query, Key, Value) controlled, ensuring the Softmax stays in a "sensitive" range.
+
+#4. All Biases	constant_(0)	Simplest starting point; prevents early shift in data.
+class MyModel(nn.Module):
     def __init__(self):
         super().__init__()
-        self.conv = nn.Conv2d(3, 64, kernel_size=3, padding=1) # Initial layer
+        # CNN Layer
+        self.conv = nn.Conv2d(3, 16, kernel_size=3)
+        # Linear Layer
+        self.fc = nn.Linear(16 * 26 * 26, 128)
+        # Simplified Attention (Multihead)
+        self.attn = nn.MultiheadAttention(embed_dim=128, num_heads=4)
 
     def forward(self, x):
-        # Simulate feature maps at different strides (4, 8, 16, 32)
-        # In a real ResNet, these would be the outputs of different stages
-        h, w = x.shape[2], x.shape[3]
-        c2 = torch.randn(x.shape[0], 64, h // 4, w // 4)
-        c3 = torch.randn(x.shape[0], 128, h // 8, w // 8)
-        c4 = torch.randn(x.shape[0], 256, h // 16, w // 16)
-        c5 = torch.randn(x.shape[0], 512, h // 32, w // 32)
-        return [c2, c3, c4, c5]
+        # ... forward pass logic ...
+        return x
+
+def init_weights(m):
+    """
+    Function to be applied to each layer of the network
+    """
+    # For Convolutional layers - Use Kaiming (Standard for Computer Vision)
+    if isinstance(m, nn.Conv2d):
+        nn.init.kaiming_uniform_(m.weight, nonlinearity='relu')
+        if m.bias is not None:
+            nn.init.constant_(m.bias, 0)
+
+    # For Linear layers - Use Xavier or Kaiming
+    elif isinstance(m, nn.Linear):
+        nn.init.xavier_uniform_(m.weight)
+        nn.init.constant_(m.bias, 0)
+
+    # For Attention layers
+    elif isinstance(m, nn.MultiheadAttention):
+        # Attention involves several internal weight matrices (in_proj, out_proj)
+        nn.init.xavier_uniform_(m.in_proj_weight)
+        nn.init.constant_(m.in_proj_bias, 0)
+        nn.init.xavier_uniform_(m.out_proj.weight)
+        nn.init.constant_(m.out_proj.bias, 0)
+
+# 1. Instantiate the model
+model = MyModel()
+
+# 2. Apply the initialization function
+model.apply(init_weights)
 
 
-if __name__ == '__main__':
-    # Define FPN parameters
-    # The input channels should match the output channels of your backbone stages
-    backbone_in_channels = [64, 128, 256, 512]
-    # The output channel count for each FPN level is typically fixed
-    fpn_out_channels = 256
+#Deformable attention (Deformable DETR, Custom Position Aware Attention)
+#1. Grid Initialization (Uniform)
+#If your reference points represent coordinates in a 2D space (like an image),
+# you shouldn't initialize them randomly. If you do, the model might "miss" 
+# certain corners of the image during early training. Instead, we initialize them as a uniform grid.
 
-    # Create model instances
-    mock_backbone = MockBackbone()
-    fpn_model = FPN(in_channels_list=backbone_in_channels, out_channels=fpn_out_channels)
+import torch
+import torch.nn as nn
 
-    # Create a dummy input image
-    dummy_image = torch.randn(2, 3, 256, 256) # Batch=2, Channels=3, Size=256x256
+def init_reference_points(m):
+    if hasattr(m, 'reference_points'):
+        # Example: Creating a 2D grid (H x W)
+        H, W = 8, 8 
+        # Generate linear spacing from 0.05 to 0.95
+        ref_y, ref_x = torch.meshgrid(
+            torch.linspace(0.5, H - 0.5, H),
+            torch.linspace(0.5, W - 0.5, W),
+            indexing='ij'
+        )
+        # Normalize to [0, 1] range
+        ref_y = ref_y.reshape(-1)[None] / H
+        ref_x = ref_x.reshape(-1)[None] / W
+        
+        # Stack into (x, y) coordinates
+        ref_points = torch.stack((ref_x, ref_y), -1) 
+        
+        # Initialize the parameter
+        m.reference_points.data.copy_(ref_points)
+        print("Reference points initialized to a uniform grid.")
 
-    # 1. Get features from the backbone
-    backbone_features = mock_backbone(dummy_image)
-    print("--- Backbone Feature Map Shapes ---")
-    for i, features in enumerate(backbone_features):
-        print(f"C{i+2} Shape: {features.shape}")
+# Usage in a layer
+class DeformableAttention(nn.Module):
+    def __init__(self, num_points=64):
+        super().__init__()
+        # Reference points are usually learned, but need a good start
+        self.reference_points = nn.Parameter(torch.zeros(1, num_points, 2))
 
-    # 2. Pass them to the FPN
-    fpn_features = fpn_model(backbone_features)
+attn_layer = DeformableAttention()
+init_reference_points(attn_layer)
 
-    print("\n--- FPN Feature Map Shapes ---")
-    for i, features in enumerate(fpn_features):
-        print(f"P{i+2} Shape: {features.shape}")
 
-    print("\nFPN successfully created a multi-scale feature pyramid!")
-    print("Each output level has the same number of channels (256) but a different spatial resolution.")
+# 2. Linear/MLP-based Reference Points
+# Sometimes reference points are generated by a small Linear layer (an "offset predictor"). In this case, we want the initial output to be zero (no offset) so the model starts by looking at the default grid.
+# Weight: nn.init.constant_(m.weight, 0)
+# Bias: nn.init.constant_(m.bias, 0)
+
+# The layer that predicts where to move the reference points
+offset_predictor = nn.Linear(128, 2) 
+
+# Initialize to zero so that initially, offsets are 0
+nn.init.constant_(offset_predictor.weight, 0)
+nn.init.constant_(offset_predictor.bias, 0)

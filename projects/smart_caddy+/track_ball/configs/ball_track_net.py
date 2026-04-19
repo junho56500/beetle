@@ -15,22 +15,27 @@ model = {
     'num_classes': 10,   # color types such as white, green, yellow
     'iou_thres': 0.5,   # IoU threshold for matching ground truth
     
-    'encoder': {
-        'backbone': 'resnet50',
-        'fpn_out_channels': 256,
-        'fpn_levels': [3, 4, 5],   # feature levels used from fpn
+    'backbone': {
+        'resnet': {
+            'type': 'resnet50',
+        },
+        'fpn': {
+            'type' : 'fpn',
+            'fpn_out_channels': 256,
+            'fpn_levels': [3, 4, 5],   # feature levels used from fpn
+        }
     },
     'lss': {
         'z_dim': 8,                # height dimension of the bev feature map (vertical aggregation)
         'bev_channels': 256,       # output channel count after lss splat
     },    
     'encoder': {
-        'type': 'self_attention',
+        'type': 'BallTrackEncoder',
         'num_layers': 3,
         'num_heads': 8,
     },
     'decoder': {
-        'type': 'deformable_attention',
+        'type': 'BallTrackDecoder',
         'num_layers': 6,
         'num_heads': 8,
         'query_dim': 256,

@@ -1,0 +1,97 @@
+<mxfile host="65bd71144e">
+    <diagram id="tWHRz3rqCA3Z7lW31VuY" name="Page-1">
+        <mxGraphModel dx="1034" dy="608" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="850" pageHeight="1100" math="0" shadow="0">
+            <root>
+                <mxCell id="0"/>
+                <mxCell id="1" parent="0"/>
+                <mxCell id="22" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="250" y="260" width="370" height="400" as="geometry"/>
+                </mxCell>
+                <mxCell id="2" value="trajectory - pose informations to sync future, past time" style="whiteSpace=wrap;html=1;strokeColor=#FFFFFF;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="450" y="202" width="180" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="5" value="trajectory" style="whiteSpace=wrap;html=1;" parent="1" vertex="1">
+                    <mxGeometry x="510" y="265" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="21" value="localization process" style="whiteSpace=wrap;html=1;strokeColor=#FFFFFF;fontStyle=1" parent="1" vertex="1">
+                    <mxGeometry x="40" y="170" width="180" height="32" as="geometry"/>
+                </mxCell>
+                <mxCell id="24" value="" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="330" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="26" style="edgeStyle=none;html=1;" edge="1" parent="1" source="25" target="5">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="25" value="vehicle (speed, yaw, yaw rate)" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="260" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="27" value="sensor data" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="320" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="28" value="map data" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="380" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="44" style="edgeStyle=orthogonalEdgeStyle;html=1;" edge="1" parent="1" source="29">
+                    <mxGeometry relative="1" as="geometry">
+                        <mxPoint x="400" y="400" as="targetPoint"/>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="29" value="map processing" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="390" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="30" value="map matching" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="390" y="350" width="200" height="70" as="geometry"/>
+                </mxCell>
+                <mxCell id="42" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=0;exitY=0.5;exitDx=0;exitDy=0;entryX=1;entryY=0.5;entryDx=0;entryDy=0;endArrow=none;endFill=0;startArrow=classicThin;startFill=1;" edge="1" parent="1" source="31" target="34">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="410" y="560"/>
+                            <mxPoint x="410" y="465"/>
+                            <mxPoint x="610" y="465"/>
+                            <mxPoint x="610" y="410"/>
+                            <mxPoint x="600" y="410"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="31" value="filter" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="440" y="480" width="150" height="160" as="geometry"/>
+                </mxCell>
+                <mxCell id="47" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="32" target="31">
+                    <mxGeometry relative="1" as="geometry">
+                        <Array as="points">
+                            <mxPoint x="230" y="560"/>
+                            <mxPoint x="230" y="560"/>
+                        </Array>
+                    </mxGeometry>
+                </mxCell>
+                <mxCell id="32" value="GPS" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="90" y="535" width="100" height="50" as="geometry"/>
+                </mxCell>
+                <mxCell id="33" value="initial pose" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="280" y="450" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="34" value="map matching" style="whiteSpace=wrap;html=1;align=left;verticalAlign=top;" vertex="1" parent="1">
+                    <mxGeometry x="400" y="360" width="200" height="80" as="geometry"/>
+                </mxCell>
+                <mxCell id="43" style="edgeStyle=orthogonalEdgeStyle;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;entryX=0;entryY=0.5;entryDx=0;entryDy=0;" edge="1" parent="1" source="35" target="34">
+                    <mxGeometry relative="1" as="geometry"/>
+                </mxCell>
+                <mxCell id="35" value="sensor processing" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="290" y="340" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="36" value="predict" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="510" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="37" value="update" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="480" y="570" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="38" value="alignment" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="410" y="390" width="70" height="40" as="geometry"/>
+                </mxCell>
+                <mxCell id="39" value="icp" style="whiteSpace=wrap;html=1;" vertex="1" parent="1">
+                    <mxGeometry x="510" y="390" width="70" height="40" as="geometry"/>
+                </mxCell>
+            </root>
+        </mxGraphModel>
+    </diagram>
+</mxfile>

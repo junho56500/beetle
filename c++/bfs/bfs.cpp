@@ -85,3 +85,29 @@ vector<int> bfs(const map<int, vector<int>>& graph, int v)
         }
     }
 }
+
+
+vector<int> bfs(map<int, vector<int>> &g, int v)
+{
+    map<int, bool> visited;
+    queue<int> q;
+    q.push(v);
+
+    while(!q.empty())
+    {
+        int i = q.front();
+        q.pop();
+        if (!visited[i])
+        {
+            visited[i] = true;
+            for (const auto& j:g.at(i))
+            {
+                if (!visited[i])
+                {
+                    q.push(j);
+                }
+            }
+        }
+    }
+
+}
